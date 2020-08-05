@@ -505,6 +505,7 @@ def pick_multiple_gpus(nb:int, model:Optional[LightningModule] = None) -> list:
 
     Note: if model is not None, a GPU is considered available if it is able to run in `train` mode a batch
     """
+    torch.set_grad_enabled(True)
     picked = []
     for _ in range(nb):
         if not model: picked.append(pick_single_gpu(exclude_gpus=picked))
@@ -513,4 +514,5 @@ def pick_multiple_gpus(nb:int, model:Optional[LightningModule] = None) -> list:
             picked.append(pick_single_gpu_realist_workload(exclude_gpus=picked, model=model))
 
     if len(picked) < 1: raise RuntimeError("None of the GPUs could accept the given workload.")
+    torch.set_grad_enabled(False)
     return picked
